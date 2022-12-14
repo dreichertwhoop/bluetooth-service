@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Local QA TemplateService" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="11" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <envs>
+      <env name="ENVIRONMENT" value="qa" />
+      <env name="WHOOP_APPLICATION_NAME" value="template-api-service" />
+      <env name="LOG_LEVEL" value="info" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.whoop.template.api.TemplateService" />
+    <module name="template-service-api" />
+    <option name="PROGRAM_PARAMETERS" value="server" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

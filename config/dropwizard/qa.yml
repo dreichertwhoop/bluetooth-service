@@ -1,0 +1,14 @@
+logging:
+  level: INFO
+  loggers:
+    io.dropwizard: INFO
+    org.eclipse.jetty: INFO
+    com.hubspot.dropwizard.guicier.GuiceBundle: INFO
+    org.apache.http: WARN
+    org.coursera: INFO
+    com.whoop.apicommons: WARN
+server:
+  type: default
+  maxThreads: 50
+  requestLog:
+    appenders: []

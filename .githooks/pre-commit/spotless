@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Part 1 - determined staged files so that we can re-staged them if they are changed
+stagedFiles=$(git diff --staged --name-only)
+
+# Part 2 - run spotless
+echo "Running spotless:apply. Formatting code..."
+mvn spotless:apply
+
+# Part 3 - re-stage any staged files that were modified and unstaged
+for file in $stagedFiles; do
+  if test -f "$file"; then
+    git add $file
+  fi
+done

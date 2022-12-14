@@ -1,0 +1,69 @@
+# Java Maven CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-java/ for more details
+#
+version: 2.1
+description: build and test template-service docker images
+
+orbs:
+  report-build: whoop/report-build@1.0
+  java-maven: whoop/java-maven@1.0
+jobs:
+  build:
+    executor: java-maven/java11
+
+    steps:
+      - report-build/start
+
+      - checkout
+
+      - java-maven/resolve-dependencies
+      - java-maven/build-and-test
+      - java-maven/sonarqube
+      - java-maven/publish
+
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+      - run:
+          name: Build and push Docker images
+          command: |
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            (
+              docker build --build-arg APP_VERSION=$CIRCLE_BUILD_NUM --build-arg APP_JAR_PATH="template-service-api/target/template-service-api.jar" -f .circleci/circleci.template-service-api.Dockerfile -t whoop/$CIRCLE_PROJECT_REPONAME:api.$CIRCLE_BRANCH.$CIRCLE_BUILD_NUM -t whoop/$CIRCLE_PROJECT_REPONAME:api.SNYK .
+              docker push whoop/$CIRCLE_PROJECT_REPONAME:api.$CIRCLE_BRANCH.$CIRCLE_BUILD_NUM &&
+              if [ "$CIRCLE_BRANCH" != "master" ]; then echo "Currently not on master branch, not pushing api SNYK image" ; else docker push whoop/$CIRCLE_PROJECT_REPONAME:api.SNYK ; fi
+            ) &
+            (
+              docker build --build-arg APP_VERSION=$CIRCLE_BUILD_NUM --build-arg APP_JAR_PATH="template-service-jobs/target/template-service-jobs.jar" -f .circleci/circleci.template-service-job.Dockerfile -t whoop/$CIRCLE_PROJECT_REPONAME:job.$CIRCLE_BRANCH.$CIRCLE_BUILD_NUM -t whoop/$CIRCLE_PROJECT_REPONAME:job.SNYK .
+              docker push whoop/$CIRCLE_PROJECT_REPONAME:job.$CIRCLE_BRANCH.$CIRCLE_BUILD_NUM &&
+              if [ "$CIRCLE_BRANCH" != "master" ]; then echo "Currently not on master branch, not pushing job SNYK image" ; else docker push whoop/$CIRCLE_PROJECT_REPONAME:job.SNYK ; fi
+            ) &
+            (
+              docker build --build-arg APP_VERSION=$CIRCLE_BUILD_NUM --build-arg=APP_JAR_PATH="template-service-stream/target/template-service-stream.jar" -f .circleci/circleci.template-service-consumer.Dockerfile -t whoop/$CIRCLE_PROJECT_REPONAME:stream.$CIRCLE_BRANCH.$CIRCLE_BUILD_NUM -t whoop/$CIRCLE_PROJECT_REPONAME:stream.SNYK .
+              docker push whoop/$CIRCLE_PROJECT_REPONAME:stream.$CIRCLE_BRANCH.$CIRCLE_BUILD_NUM &&
+              if [ "$CIRCLE_BRANCH" != "master" ]; then echo "Currently not on master branch, not pushing stream SNYK image" ; else docker push whoop/$CIRCLE_PROJECT_REPONAME:stream.SNYK ; fi
+            ) &
+            (
+              docker build --build-arg APP_VERSION=$CIRCLE_BUILD_NUM --build-arg APP_JAR_PATH="template-service-int-test/target/template-service-int-test.jar" -f .circleci/circleci.template-service-int-test.Dockerfile -t whoop/$CIRCLE_PROJECT_REPONAME:integration-test.$CIRCLE_BRANCH.$CIRCLE_BUILD_NUM -t whoop/$CIRCLE_PROJECT_REPONAME:integration-test.SNYK .
+              docker push whoop/$CIRCLE_PROJECT_REPONAME:integration-test.$CIRCLE_BRANCH.$CIRCLE_BUILD_NUM &&
+              if [ "$CIRCLE_BRANCH" != "master" ]; then echo "Currently not on master branch, not pushing integration-test SNYK image" ; else docker push whoop/$CIRCLE_PROJECT_REPONAME:integration-test.SNYK ; fi
+            ) &
+            while true; do
+              [ -z "$(jobs)" ] && break
+              wait -n
+              err="$?"
+              [ "$err" != "0" ] && ecode="$err"
+            done
+
+      - report-build/report
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build:
+          # Contains common global env vars like nexus creds
+          context: environment-variables
+      - java-maven/snyk_security_scan:
+          context: environment-variables

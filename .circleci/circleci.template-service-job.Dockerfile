@@ -1,0 +1,1 @@
+FROM whoop/docker-commons:java-base-onbuild.master.101

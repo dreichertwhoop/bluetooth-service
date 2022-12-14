@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>template-service</artifactId>
+        <groupId>com.whoop</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>template-service-data</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.whoop</groupId>
+            <artifactId>template-service-models</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- api-commons -->
+        <dependency>
+            <groupId>com.whoop</groupId>
+            <artifactId>api-commons-guice</artifactId>
+            <version>3.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.whoop</groupId>
+            <artifactId>api-commons-jdbi</artifactId>
+            <version>3.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.whoop</groupId>
+            <artifactId>api-commons-config</artifactId>
+            <version>3.0-SNAPSHOT</version>
+        </dependency>
+        <!-- sql dao -->
+        <dependency>
+            <groupId>org.jdbi</groupId>
+            <artifactId>jdbi3-sqlobject</artifactId>
+        </dependency>
+        <!-- BindWithRosetta -->
+        <dependency>
+            <groupId>com.hubspot.rosetta</groupId>
+            <artifactId>RosettaJdbi3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+
+    </dependencies>
+
+
+</project>

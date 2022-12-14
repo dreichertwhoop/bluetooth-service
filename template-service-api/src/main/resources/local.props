@@ -1,0 +1,4 @@
+REGION_NAME=us-west-2
+AUTH_URL=http://api-internal.dev.whoop.com/auth-service/v1
+HYDRA_ADMIN_URL=temp
+SENTRY_DSN=https://d62630f875e94a4f9114c70b34854713@sentry.io/2104734

@@ -1,0 +1,12 @@
+logging:
+  level: DEBUG
+  loggers:
+    io.dropwizard: DEBUG
+    org.eclipse.jetty: INFO
+    com.hubspot.dropwizard.guicier.GuiceBundle: INFO
+    org.apache.http: INFO
+    org.coursera: INFO
+    com.whoop.apicommons: INFO
+server:
+  type: default
+  maxThreads: 25
